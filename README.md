@@ -1,5 +1,13 @@
 # How to use 如何使用
 打开农场的微信小程序，然后运行
+```
+python3 -m pip install --upgrade \
+  pyautogui \
+  pillow \
+  opencv-python \
+  numpy \
+  pyscreeze
+```
 ```python3 click_hand_v2.py```
 
 
