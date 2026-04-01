@@ -38,7 +38,7 @@ CLICKS = 5
 INTERVAL = 0.3
 BUTTON = "left"
 RETRY_EVERY = 0.5
-TIMEOUT = 1200
+TIMEOUT = 6 * 60 * 60 # 6 hours
 # Mouse path before click: moveTo uses tween over duration (not an instant jump).
 MOVE_TO_BEFORE_CLICK = True
 MOVE_DURATION_SEC = (0.1, 0.15)  # random uniform between min/max seconds
@@ -374,7 +374,7 @@ def main():
             print("Timed out without finding the icon.")
             sys.exit(2)
 
-        time.sleep(RETRY_EVERY)
+        # time.sleep(RETRY_EVERY)
 
 
 if __name__ == "__main__":
