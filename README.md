@@ -1,5 +1,5 @@
 # How to use 如何使用
-打开农场的微信小程序，然后运行
+第一次安装：
 ```
 python3 -m pip install --upgrade \
   pyautogui \
@@ -8,6 +8,7 @@ python3 -m pip install --upgrade \
   numpy \
   pyscreeze
 ```
+然后打开农场的微信小程序，点开一个好友的农场，然后运行
 ```python3 click_hand_v2.py```
 
 

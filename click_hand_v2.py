@@ -21,7 +21,7 @@ ANCHOR_IMAGE_PATH = "menu_anchor.png"
 # Vertical offset for the anchor match, as a fraction of the anchor image height.
 # 0.0 = very top of the anchor, 0.5 = halfway down, 1.0 = bottom, etc.
 ANCHOR_OFFSET_X = 4.3 #控制锚点偏移的X轴 - 如果代码看不到按钮，微调这个数值。我测试的过程中 4.0-4.4 好像都行。
-ANCHOR_OFFSET_Y = 16.5 #控制锚点偏移的Y轴 - 如果代码看不到按钮，微调这个数值。我测试的过程中 15-17 好像都行。
+ANCHOR_OFFSET_Y = 16.3 #控制锚点偏移的Y轴 - 如果代码看不到按钮，微调这个数值。我测试的过程中 15-17 好像都行。
 # Haystack rectangle relative to the TOP-LEFT of the matched anchor image (after applying ANCHOR_OFFSET_Y).
 # dx = (haystack_left - anchor_left), dy = (haystack_top - anchor_top), then width × height.
 SEARCH_REGION = (200, 1)  # width, height 截图区宽度和高度度，单位：像素
@@ -29,6 +29,8 @@ CONFIDENCE = 0.85 # 匹配的置信度，0.0-1.0，越高越精确，但也会�
 ANCHOR_CONFIDENCE = 0.8 # 锚点匹配的置信度，0.0-1.0，越高越精确，但也会越慢。建议别碰
 ANCHOR_FIND_TIMEOUT = 15 # 锚点匹配的超时时间，单位：秒 15秒的时间要是找不到锚点基本上可以判断为代码别的地方出问题了。
 ANCHOR_REFRESH_EVERY = 1.0 # 锚点匹配的刷新时间，单位：秒 1秒刷新一次，要是锚点匹配失败，会自动刷新。
+
+IGNORE_RGB = (140,165,69) # 提升至xx等级的盒子的颜色
 
 CLICKS = 5
 BUTTON = "left"
@@ -191,7 +193,7 @@ def tune_offset_y() -> None:
     print("Enter a vertical offset fraction (e.g. 0.0, 0.25, 0.5). 'q' to quit.")
 
     while True:
-        raw = input("OFFSET_Y fraction (0.0-1.0, 'q' to quit): ").strip()
+        raw = input(f"OFFSET_Y fraction (10 <-> -10, 'q' to quit). Current OFFSET_Y: {ANCHOR_OFFSET_Y} ").strip()
         if raw.lower() in ("q", "quit", "exit"):
             break
         try:
@@ -207,9 +209,10 @@ def tune_offset_y() -> None:
             base_anchor.height,
         )
         left, top, w, h = haystack_screen_rect(temp_box)
-        print(f"Using OFFSET_Y={offset_y:.3f}, rect=({left}, {top}, {w}, {h})")
+        h = 30
+        print(f"Using OFFSET_Y={ANCHOR_OFFSET_Y:.3f}, rect=({left}, {top}, {w}, {h})")
         shot = pyautogui.screenshot(region=(left, top, w, h))
-        out = Path(f"tune_offset_y_{offset_y:.3f}.png")
+        out = Path(f"tune_offset_y_{ANCHOR_OFFSET_Y:.3f}.png")
         shot.save(out)
         print(f"Saved {out.resolve()}")
         if sys.platform == "darwin":
@@ -279,8 +282,8 @@ def main():
             else:
                 # Fallback, though Pillow should always return a tuple here.
                 r = g = b = int(pixel)
-            in_range = (130 <= r <= 255) and (130 <= g <= 255) and (70 <= b <= 255)
-            if not in_range:
+            in_range = (110 <= r <= 255) and (130 <= g <= 255) and (70 <= b <= 255)
+            if not in_range and (r, g, b) != IGNORE_RGB:
                 screen_x = left + x + random.randint(0, 10)
                 screen_y = top + y + random.randint(0, 10)
                 click_pos = (screen_x, screen_y)
